@@ -7,16 +7,23 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
 
 $escape = function ($s) {
     return htmlspecialchars((string) $s, ENT_QUOTES, 'UTF-8');
 };
 
-// Module params are available via $params if loaded. If not, we can access via ModuleHelper in entry.
-// But we will fetch local variables from the scope (the entry included this layout).
-// Expected variables in scope: $users, $showUsername, $showEmail, $limit, $orderBy, $orderDir, $errors
+// capture current values so they can be posted back for export
+$curShowUsername = (int) $showUsername;
+$curShowEmail = (int) $showEmail;
+$curLimit = (int) $limit;
+$curOrderBy = isset($orderBy) ? $orderBy : 'id';
+$curOrderDir = isset($orderDir) ? $orderDir : 'ASC';
 
+// current full URL (will post to same page)
+$action = Uri::getInstance()->toString();
 ?>
+
 <div class="mod-userlist-admin">
     <?php if (!empty($errors)) : ?>
         <div class="alert alert-danger">
@@ -36,16 +43,21 @@ $escape = function ($s) {
             </div>
         <?php else: ?>
 
-            <div style="margin-bottom: 0.5rem;">
-                <form method="get" style="display:inline;">
-                    <input type="hidden" name="download_csv" value="1" />
-                    <button type="submit" class="btn btn-primary btn-sm">
-                        <?php echo $escape(Text::_('MOD_USERLIST_ADMIN_DOWNLOAD_CSV')); ?>
-                    </button>
-                </form>
-            </div>
+            <!-- Export form (POSTs to the CURRENT page) -->
+            <form method="post" action="<?php echo $escape($action); ?>" style="display:inline;">
+                <?php echo \Joomla\CMS\HTML\Helpers\Form::token(); ?>
+                <input type="hidden" name="mod_userlist_admin_export" value="1" />
+                <input type="hidden" name="show_username" value="<?php echo $curShowUsername; ?>" />
+                <input type="hidden" name="show_email" value="<?php echo $curShowEmail; ?>" />
+                <input type="hidden" name="limit" value="<?php echo $curLimit; ?>" />
+                <input type="hidden" name="order_by" value="<?php echo $escape($curOrderBy); ?>" />
+                <input type="hidden" name="order_dir" value="<?php echo $escape($curOrderDir); ?>" />
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <?php echo $escape(Text::_('MOD_USERLIST_ADMIN_DOWNLOAD_CSV')); ?>
+                </button>
+            </form>
 
-            <table class="table table-striped table-condensed" style="width:100%; border-collapse:collapse;">
+            <table class="table table-striped table-condensed" style="width:100%; border-collapse:collapse; margin-top:.5rem;">
                 <thead>
                     <tr>
                         <th><?php echo $escape(Text::_('MOD_USERLIST_ADMIN_COL_ID')); ?></th>

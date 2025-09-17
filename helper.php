@@ -7,8 +7,6 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Component\ComponentHelper;
-use Joomla\CMS\Language\Text;
 
 class ModUserlistAdminHelper
 {
@@ -52,43 +50,5 @@ class ModUserlistAdminHelper
         }
 
         return $results;
-    }
-
-    /**
-     * Export CSV - outputs headers and exits.
-     *
-     * @param array $users
-     * @param bool  $showUsername
-     * @param bool  $showEmail
-     *
-     * @return void
-     */
-    public static function exportCsv($users, $showUsername = true, $showEmail = true)
-    {
-        $filename = 'userlist-' . date('Ymd-His') . '.csv';
-
-        // CSV headers
-        header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
-
-        $out = fopen('php://output', 'w');
-
-        $header = ['ID', 'Name'];
-        if ($showUsername) $header[] = 'Username';
-        if ($showEmail)    $header[] = 'Email';
-        $header[] = 'Registered Date';
-
-        fputcsv($out, $header);
-
-        foreach ($users as $u) {
-            $row = [(int) $u->id, (string) $u->name];
-            if ($showUsername) $row[] = (string) $u->username;
-            if ($showEmail)    $row[] = (string) $u->email;
-            $row[] = isset($u->registerDate) ? $u->registerDate : '';
-            fputcsv($out, $row);
-        }
-
-        fclose($out);
-        exit;
     }
 }
