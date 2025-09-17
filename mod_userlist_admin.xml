@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="5.0" client="administrator" method="upgrade">
+    <name>User List (Admin)</name>
+    <author>Dolcey Mendoza</author>
+    <version>1.0.0</version>
+    <description>Administrator module that lists site users with configurable columns.</description>
+
+    <files>
+        <filename module="mod_userlist_admin">mod_userlist_admin.php</filename>
+        <filename>helper.php</filename>
+        <folder>tmpl</folder>
+        <folder>language</folder>
+    </files>
+
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field name="show_username" type="radio" default="1" label="MOD_USERLIST_ADMIN_PARAM_SHOW_USERNAME_LABEL" description="MOD_USERLIST_ADMIN_PARAM_SHOW_USERNAME_DESC">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
+                <field name="show_email" type="radio" default="1" label="MOD_USERLIST_ADMIN_PARAM_SHOW_EMAIL_LABEL" description="MOD_USERLIST_ADMIN_PARAM_SHOW_EMAIL_DESC">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
+                <field name="limit" type="number" default="20" label="MOD_USERLIST_ADMIN_PARAM_LIMIT_LABEL" description="MOD_USERLIST_ADMIN_PARAM_LIMIT_DESC" />
+
+                <field name="order_by" type="list" default="id" label="MOD_USERLIST_ADMIN_PARAM_ORDERBY_LABEL" description="MOD_USERLIST_ADMIN_PARAM_ORDERBY_DESC">
+                    <option value="id">ID</option>
+                    <option value="name">Name</option>
+                    <option value="username">Username</option>
+                    <option value="email">Email</option>
+                    <option value="registerDate">Registered Date</option>
+                </field>
+
+                <field name="order_dir" type="list" default="ASC" label="MOD_USERLIST_ADMIN_PARAM_ORDERDIR_LABEL" description="MOD_USERLIST_ADMIN_PARAM_ORDERDIR_DESC">
+                    <option value="ASC">ASC</option>
+                    <option value="DESC">DESC</option>
+                </field>
+
+            </fieldset>
+        </fields>
+    </config>
+
+    <languages>
+        <language tag="en-GB">language/en-GB/en-GB.mod_userlist_admin.ini</language>
+    </languages>
+
+</extension>
