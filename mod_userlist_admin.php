@@ -10,22 +10,23 @@ require_once __DIR__ . '/helper.php';
 $app    = Factory::getApplication();
 $input  = $app->getInput();
 
+// Permission check: only show list if user can manage com_users
+$user = Factory::getUser();
+$canView = $user->authorise('core.manage', 'com_users');
+
+$showUsername = (bool) $params->get('show_username', 1);
+$showEmail    = (bool) $params->get('show_email', 1);
+$limit        = (int)  $params->get('limit', 20);
+$orderBy      = $params->get('order_by', 'id');
+$orderDir     = strtoupper($params->get('order_dir', 'ASC')) === 'DESC' ? 'DESC' : 'ASC';
+
 // Handle export
 if ($input->getMethod() === 'POST' && $input->getInt('mod_userlist_admin_export', 0) && Session::checkToken('post')) {
-    $user = Factory::getUser();
-    if (!$user->authorise('core.manage', 'com_users')) {
+    if (!$canView) {
         header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
         echo Text::_('MOD_USERLIST_ADMIN_ERR_NO_PERMISSION');
         exit; // stop everything
     }
-
-    require_once __DIR__ . '/helper.php';
-
-    $showUsername = (int) $input->getInt('show_username', 1);
-    $showEmail    = (int) $input->getInt('show_email', 1);
-    $limit        = (int) $input->getInt('limit', 20);
-    $orderBy      = $input->getCmd('order_by', 'id');
-    $orderDir     = strtoupper($input->getCmd('order_dir', 'ASC')) === 'DESC' ? 'DESC' : 'ASC';
 
     $users = ModUserlistAdminHelper::getUsers($limit, $orderBy, $orderDir);
 
@@ -58,16 +59,6 @@ if ($input->getMethod() === 'POST' && $input->getInt('mod_userlist_admin_export'
     fclose($out);
     exit;
 }
-
-$showUsername = (bool) $params->get('show_username', 1);
-$showEmail    = (bool) $params->get('show_email', 1);
-$limit        = (int)  $params->get('limit', 20);
-$orderBy      = $params->get('order_by', 'id');
-$orderDir     = strtoupper($params->get('order_dir', 'ASC')) === 'DESC' ? 'DESC' : 'ASC';
-
-// Permission check: only show list if user can manage com_users
-$user = Factory::getUser();
-$canView = $user->authorise('core.manage', 'com_users');
 
 $errors = [];
 
